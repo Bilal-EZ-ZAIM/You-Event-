@@ -45,23 +45,5 @@ class Home extends Controller
         $this->view('home', $result, $input);
     }
 
-    // public function index()
-    // {
-    //     $user = new User;
-    //     $eve = new Eve;
-    //     $input = $user->getColomn();
-    //     $result = $user->findAll();
-    //     $data = [];
-    //     if(isset($_POST["insert"])){
-    //         for($i = 0 ; count($input) > $i; $i++ ){
-    //             $data[$i] = $_POST[$input[$i]];
-    //         }
-    //         $user->test($data);
-    //         show($data);
-
-    //     }
-    //     $this->view('home', $result ,  $input);
-    // }
-
 }
 ?>

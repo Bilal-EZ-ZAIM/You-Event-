@@ -3,7 +3,6 @@ class Login extends Controller
 {
     public function index()
     {
-        // Assuming form data is submitted
         $data = [];
         if (isset($_POST['sing'])) {
             $data["email"] = $_POST['email'];

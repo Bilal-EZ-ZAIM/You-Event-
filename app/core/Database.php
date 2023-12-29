@@ -13,23 +13,6 @@ trait Database {
     }
     
 
-    // public function query($query, $data = []){
-    //     try {
-    //         $con = $this->connect();
-    //         $stm = $con->prepare($query);
-    //         $stm->execute($data);
-
-    //         $result = $stm->fetchAll(PDO::FETCH_OBJ);
-    //         if(is_array($result) && count($result) > 0){
-    //             return $result;
-    //         } else {
-    //             return [];
-    //         }
-    //     } catch (PDOException $e) {
-    //         // Handle query error
-    //         die("Query failed: " . $e->getMessage());
-    //     }
-    // }
     public function query($query, $data = [])
 {
     try {
@@ -37,17 +20,12 @@ trait Database {
         $stm = $con->prepare($query);
         $stm->execute($data);
 
-        // For INSERT operations, you may not need to fetch results.
-        // Check if the query is an INSERT before attempting to fetch results.
         if (strpos(strtoupper($query), 'INSERT') !== false) {
             return true;
         }
-
-        // For other queries, fetch results.
         $result = $stm->fetchAll(PDO::FETCH_OBJ);
         return is_array($result) ? $result : [];
     } catch (PDOException $e) {
-        // Handle query error
         die("Query failed: " . $e->getMessage());
     }
 }
@@ -65,7 +43,6 @@ trait Database {
                 return [];
             }
         } catch (PDOException $e) {
-            // Handle query error
             die("Query failed: " . $e->getMessage());
         }
     }

@@ -7,7 +7,6 @@ class Dashbord extends Controller
     {
       
 
-        // Assuming form data is submitted
         $user = new User;
         $result = $user->findAll();
         $data['result'] = $result;

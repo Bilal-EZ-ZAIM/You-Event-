@@ -5,7 +5,6 @@ class Singup extends Controller
     {
       
 
-        // Assuming form data is submitted
         $data = [];
         if (isset($_POST['sing'])) {
             $data["nom"] = $_POST['nom'];

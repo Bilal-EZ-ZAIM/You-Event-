@@ -3,7 +3,6 @@
 trait Model
 {
     use Database;
-    // protected $table = 'utilisateurs';
     protected $limit = 5;
     protected $offset = 0;
     protected $order_type = "desc";
@@ -30,7 +29,6 @@ trait Model
         $query = "SELECT * FROM $this->table WHERE ";
         $conditions = [];
 
-        // Check if $data is not empty
         if (!empty($data)) {
             foreach ($data as $key => $value) {
                 $conditions[] = "$key = :$key";
@@ -39,7 +37,6 @@ trait Model
             $query .= implode(" AND ", $conditions);
             return $this->query($query, $data);
         } else {
-            // If $data is empty, return an empty result set or handle it as needed
             return [];
         }
     }
