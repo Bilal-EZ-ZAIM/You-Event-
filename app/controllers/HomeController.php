@@ -9,12 +9,9 @@ class Home extends Controller
     {
         $user = new User;
         $eve = new Eve;
-        $wher = $user->where(['id'=> 1,"email" => "ezz@example.com"]);
-        show($wher);
         $input = $user->getColomn();
         $result = $user->findAll();
 
-        show($result);
 
         if (isset($_POST["insert"])) {
             $data = [];

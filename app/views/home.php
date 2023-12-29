@@ -34,8 +34,8 @@
         <?php foreach ($input as $row): ?>
             <input type="text" id=<?php echo $row ?> placeholder=<?php echo $row ?> name=<?php echo $row ?>>
         <?php endforeach; ?>
-        <input type="submit" name="update">
-        </from>
+        <input type="submit" name="insert">
+    </from>
 
         <div>
 
@@ -50,6 +50,10 @@
         <?php
         show($data);
         ?>
+        <script>
+            let pass =document.getElementById("passwords");
+            pass.type = "password";
+        </script>
 
 </body>
 
