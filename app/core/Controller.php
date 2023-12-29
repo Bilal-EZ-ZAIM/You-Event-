@@ -2,7 +2,7 @@
 
 class Controller
 {
-    public function view($name, $data = [] ,)
+    public function view($name, $data = [] , $input = [])
     {
         $filename = "../app/views/" . $name . ".php";
 

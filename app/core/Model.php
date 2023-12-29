@@ -22,24 +22,28 @@ trait Model
         for ($i = 0; $i < count($use); $i++) {
             array_push($array, $use[$i]->Field);
         }
-        show($array);
         return $array;
 
     }
     public function where($data)
     {
         $query = "SELECT * FROM $this->table WHERE ";
+        $conditions = [];
 
-        // Assuming $data is an associative array with column names as keys and values as values
-        foreach ($data as $key => $value) {
-            $query .= "$key = :$key AND ";
+        // Check if $data is not empty
+        if (!empty($data)) {
+            foreach ($data as $key => $value) {
+                $conditions[] = "$key = :$key";
+            }
+
+            $query .= implode(" AND ", $conditions);
+            return $this->query($query, $data);
+        } else {
+            // If $data is empty, return an empty result set or handle it as needed
+            return [];
         }
-
-        $query = rtrim($query, " AND ");
-
-
-        return $this->query($query, $data);
     }
+
 
     public function login($data)
     {
@@ -86,11 +90,19 @@ trait Model
         }
 
         $query .= implode(" AND ", $conditions);
-        $query .= " LIMIT $this->limit OFFSET $this->offset ";
+
+        if ($this->limit !== null && $this->offset !== null) {
+            $query .= " LIMIT :limit OFFSET :offset ";
+        }
 
         $mergedData = array_merge($data, $data_not);
 
+        // Bind LIMIT and OFFSET values separately
+        $mergedData['limit'] = $this->limit;
+        $mergedData['offset'] = $this->offset;
+
         $result = $this->query($query, $mergedData);
+
         if ($result) {
             return $result[0];
         } else {
@@ -98,11 +110,32 @@ trait Model
         }
     }
 
-    public function insert($data)
-    {
-        $keys = array_keys($data);
-        $query = "INSERT INTO $this->table (" . implode(", ", $keys) . ") VALUES (:" . implode(", :", $keys) . ") ";
 
+    // public function insert($data)
+    // {
+    //     $keys = array_keys($data);
+    //     $query = "INSERT INTO $this->table (" . implode(", ", $keys) . ") VALUES (:" . implode(", :", $keys) . ") ";
+
+
+    //     try {
+    //         $this->query($query, $data);
+    //         return true;
+    //     } catch (PDOException $e) {
+    //         die("Insert failed: " . $e->getMessage());
+    //     }
+    // }
+    public function insert($data = [])
+    {
+        $colum = $this->getColomn();
+
+        // Check if the number of columns and values match
+        if (count($colum) !== count($data)) {
+            die("Number of columns does not match number of values");
+        }
+
+        $columns = implode(", ", $colum);
+        $placeholders = ":" . implode(", :", $colum);
+        $query = "INSERT INTO $this->table ($columns) VALUES ($placeholders)";
 
         try {
             $this->query($query, $data);
@@ -111,27 +144,22 @@ trait Model
             die("Insert failed: " . $e->getMessage());
         }
     }
-    public function test()
-    {
-        $qz = $this->getColomn();
-        $data = [
-            "id",
-            "bilal",
-            "zaim",
-            "bilalzaim@gmail.com",
-            "123456",
-            "1"
 
-        ];
-        echo "<from  >";
-        foreach($qz as $inp){
-            echo "<input type=text name=$inp placeholder=$inp id=$inp> </input>";
-        }
-        echo "</from >";
-        $query = "INSERT INTO $this->table" ." ( `  " .  implode(' ` , ` ', $qz)." ` )  ". " VALUES " . ' ( "  ' .  implode(' " , " ', $data).' " )  ' ;
-        
-        
-    }
+    // public function test($data = [])
+    // {
+    //     $qz = $this->getColomn();
+    //     $query = "INSERT INTO $this->table (" . implode(", ", $qz) . ") VALUES (:" . implode(", :", $data) . ") ";
+
+
+
+    //     // $query = "INSERT INTO $this->table" . " ( `  " . implode(' ` , ` ', $qz) . " ` )  " . " VALUES " . ' (:"  ' . implode(' " , :" ', $data) . ' " )  ';
+    //     try {
+    //         $this->query($query, $data);
+    //         return true;
+    //     } catch (PDOException $e) {
+    //         die("Insert failed: " . $e->getMessage());
+    //     }
+    // }
 
     // public function insert($data)
     // {
@@ -148,27 +176,36 @@ trait Model
         $query = "UPDATE $this->table SET ";
 
         foreach ($keys as $key) {
-            $query .= "$key = :$key, ";
+            $query .= "`$key` = :$key, ";
         }
 
         $query = rtrim($query, ', ');
 
-        $query .= " WHERE $id = :$id_column ";
+        $query .= " WHERE `$id_column` = :$id_column ";
 
         $data[$id_column] = $id;
 
-        echo $query;
-        $this->query($query, $data);
-        return false; 
+        try {
+            $this->query($query, $data);
+            return true; // Update successful
+        } catch (PDOException $e) {
+            die("Update failed: " . $e->getMessage());
+        }
     }
+
     public function delete($id_column, $id = 'id')
     {
         $data[$id] = $id_column;
         $query = "DELETE FROM $this->table WHERE $id = :$id ";
-        $this->query($query, $data);
-        return false;
 
+        try {
+            $this->query($query, $data);
+            return true;
+        } catch (PDOException $e) {
+            die("Delete failed: " . $e->getMessage());
+        }
     }
+
 
 
 }
