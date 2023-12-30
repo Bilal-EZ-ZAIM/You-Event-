@@ -105,6 +105,7 @@
             <p>Lieu de l'événement:
                 <?php echo $data[0]->locationEvent; ?>
             </p>
+            <a href="ticke?id=<?php echo $data[0]->id; ?>">page acheter le tickes</a>
 
             <a href="home">Retour à la liste des événements</a>
             <?php
