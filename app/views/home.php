@@ -90,6 +90,7 @@
         <p>Découvrez les prochains événements passionnants.</p>
     </div>
     <main>
+        
         <?php foreach ($data as $row): ?>
             <div class="cart">
                 <h3>
