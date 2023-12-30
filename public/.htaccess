@@ -1,4 +1,3 @@
-
     RewriteEngine On
     # accept loading of actual -f files and -d directories
     RewriteCond %{REQUEST_FILENAME} !-f

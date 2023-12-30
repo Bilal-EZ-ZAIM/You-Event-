@@ -3,11 +3,13 @@ class Login extends Controller
 {
     public function index()
     {
-        // Assuming form data is submitted
         $data = [];
         if (isset($_POST['sing'])) {
-            $data["email"] = $_POST['email'];
-            $data["mot_de_passe"] = $_POST['password'];
+            $data = array(
+                "email" => $_POST["email"],
+                "mot_de_passe"=> $_POST["pssword"],
+            );
+
             $user = new User;
             $result = $user->where($data);
             $data['result'] = $result;

@@ -1,7 +1,7 @@
 <?php
 class User {
     use Model ;
-    protected $table = 'utilisateurs';
+    protected $table = 'admin';
     protected $allowedColums = [
         "id",
         "nom",
@@ -12,4 +12,6 @@ class User {
     ];
     
 }
-?>  
+
+
+?>

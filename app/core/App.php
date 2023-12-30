@@ -1,10 +1,11 @@
 <?php
-
+echo"sdjfk";
 
 class App{
     private $controller = 'home';
     private $method = 'index';
-public function splitUrl(){
+
+    static public  function splitUrl(){
     $url = $_GET['url'] ?? 'home'; 
     $url =  explode("/",$url);
     return $url;
@@ -12,7 +13,7 @@ public function splitUrl(){
 
 
 public function loadController(){
-    $url = $this->splitUrl();
+    $url = self::splitUrl();
     $filename = "../app/controllers/".ucfirst($url[0])."Controller.php";
     if(file_exists($filename)){
         require $filename;

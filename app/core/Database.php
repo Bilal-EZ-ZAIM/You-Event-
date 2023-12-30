@@ -1,21 +1,13 @@
 <?php
-
-
-
-
-
-
-
 trait Database {
-    private function connect(){
+    public function connect(){
         try {
             $string = "mysql:host=".DBHOST.";dbname=".DBNAME;
             $con = new PDO($string, DBUSER, DBPASS);
             $con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             return $con;
         } catch (PDOException $e) {
-            // Handle connection error
-            die("Connection failed: " . $e->getMessage());
+           die("Connection failed: " . $e->getMessage());
         }
     }
     
@@ -33,7 +25,6 @@ trait Database {
                 return [];
             }
         } catch (PDOException $e) {
-            // Handle query error
             die("Query failed: " . $e->getMessage());
         }
     }
@@ -51,7 +42,6 @@ trait Database {
                 return [];
             }
         } catch (PDOException $e) {
-            // Handle query error
             die("Query failed: " . $e->getMessage());
         }
     }

@@ -145,7 +145,7 @@
                     </td>
                     
                     <td class="action-buttons">
-                        <button class="edit-button" value="<?php echo $row['id']; ?>">Edit</button>
+                        <button class="update-button" value="<?php echo $row['id']; ?>">Edit</button>
                         <button class="delete-button">Delete</button>
                     </td>
                 </tr>
