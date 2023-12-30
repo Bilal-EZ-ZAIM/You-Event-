@@ -1,7 +1,7 @@
 <?php
 class Eve {
     use Model ;
-    protected $table = 'roles';
+    protected $table = 'events';
 }
 
 
