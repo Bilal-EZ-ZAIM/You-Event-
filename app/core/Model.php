@@ -8,6 +8,54 @@ trait Model
     protected $order_type = "desc";
     protected $order_column = "id";
 
+    public function getTable()
+    {
+        return $this->table;
+    }
+
+    public function getLimit()
+    {
+        return $this->limit;
+    }
+
+    public function getOffset()
+    {
+        return $this->offset;
+    }
+
+    public function getOrderType()
+    {
+        return $this->order_type;
+    }
+
+    public function getOrderColumn()
+    {
+        return $this->order_column;
+    }
+
+    public function dynamicJoin($joinTable, $currentTableColumn, $joinColumn)
+    {
+        $query = "SELECT * FROM $this->table";
+        $query .= " INNER JOIN $joinTable ON $this->table.$currentTableColumn = $joinTable.$joinColumn";
+
+        return $this->query($query);
+    }
+
+    public function dynamicMultiJoin($joins)
+    {
+        $query = "SELECT * FROM $this->table";
+
+        foreach ($joins as $join) {
+            $joinTable = $join['table'];
+            $currentTableColumn = $join['currentTableColumn'];
+            $joinColumn = $join['joinColumn'];
+
+            $query .= " INNER JOIN $joinTable ON $this->table.$currentTableColumn = $joinTable.$joinColumn";
+        }
+
+        return $this->query($query);
+    }
+
     public function findAll()
     {
         $query = "SELECT * FROM $this->table ";
@@ -45,34 +93,11 @@ trait Model
     public function login($data)
     {
         $query = "SELECT * FROM $this->table WHERE email = :email ";
-
+        $_SESSION['id'] = 5;
         return $this->query($query, $data);
     }
 
 
-    // public function where($data, $data_not = [])
-    // {
-
-    //     $query = "SELECT * FROM $this->table WHERE ";
-    //     $conditions = [];
-
-    //     foreach ($data as $key => $value) {
-    //         $conditions[] = "$key = :$key";
-    //     }
-
-    //     foreach ($data_not as $key => $value) {
-    //         $conditions[] = "$key != :$key";
-    //     }
-
-    //     $query .= implode(" AND ", $conditions);
-    //     $query .= "ORDER BY $this->order_column  LIMIT $this->limit OFFSET $this->offset ";
-
-    //     $mergedData = array_merge($data, $data_not);
-
-    //     return $this->query($query, $mergedData);
-    // }
-
-    // Implement other CRUD methods (insert, update, delete, first) as needed
     public function first($data, $data_not = [])
     {
         $query = "SELECT * FROM $this->table WHERE ";
@@ -94,7 +119,6 @@ trait Model
 
         $mergedData = array_merge($data, $data_not);
 
-        // Bind LIMIT and OFFSET values separately
         $mergedData['limit'] = $this->limit;
         $mergedData['offset'] = $this->offset;
 
@@ -108,24 +132,11 @@ trait Model
     }
 
 
-    // public function insert($data)
-    // {
-    //     $keys = array_keys($data);
-    //     $query = "INSERT INTO $this->table (" . implode(", ", $keys) . ") VALUES (:" . implode(", :", $keys) . ") ";
 
-
-    //     try {
-    //         $this->query($query, $data);
-    //         return true;
-    //     } catch (PDOException $e) {
-    //         die("Insert failed: " . $e->getMessage());
-    //     }
-    // }
     public function insert($data = [])
     {
         $colum = $this->getColomn();
 
-        // Check if the number of columns and values match
         if (count($colum) !== count($data)) {
             die("Number of columns does not match number of values");
         }
@@ -142,30 +153,7 @@ trait Model
         }
     }
 
-    // public function test($data = [])
-    // {
-    //     $qz = $this->getColomn();
-    //     $query = "INSERT INTO $this->table (" . implode(", ", $qz) . ") VALUES (:" . implode(", :", $data) . ") ";
 
-
-
-    //     // $query = "INSERT INTO $this->table" . " ( `  " . implode(' ` , ` ', $qz) . " ` )  " . " VALUES " . ' (:"  ' . implode(' " , :" ', $data) . ' " )  ';
-    //     try {
-    //         $this->query($query, $data);
-    //         return true;
-    //     } catch (PDOException $e) {
-    //         die("Insert failed: " . $e->getMessage());
-    //     }
-    // }
-
-    // public function insert($data)
-    // {
-    //     $keys = array_keys($data);
-    //     $query = "INSERT INTO $this->table (" . implode(" , ", $keys) . ") VALUES(:" . implode(" , :", $keys) . ") ";
-    //     echo $query;
-    //     $this->query($query, $data);
-    //     return false;
-    // }
 
     public function update($id, $data, $id_column = 'id')
     {
@@ -184,7 +172,7 @@ trait Model
 
         try {
             $this->query($query, $data);
-            return true; // Update successful
+            return true; 
         } catch (PDOException $e) {
             die("Update failed: " . $e->getMessage());
         }
@@ -202,62 +190,13 @@ trait Model
             die("Delete failed: " . $e->getMessage());
         }
     }
+    public function de()
+    {
+        echo "hhhhh";
+    }
 
 
 
 }
-
-?>
-
-
-
-
-
-<?php
-
-// class Model extends  Database{
-//     protected $table = 'utilisateurs';
-//     protected $limit = 5;
-//     protected $offset = 0;
-//     // function test(){
-//     //     $query = "SELECT * FROM `utilisateurs`";
-//     //     $result = $this->query($query);
-//     //     show($result);
-//     // }
-
-//     public function where($data , $data_not = []){
-//         $query = "";
-//         $query = "SELECT * FROM $this->table WHERE ";
-//         $keys = array_keys($data);
-//         $keys_not = array_keys($data_not);
-
-//         foreach($keys as $key){
-//             $query .= $key . " = : " .$key . " && ";
-//         }
-//         foreach($keys_not as $key){
-//             $query .= $key . " != : " .$key . " && ";
-//         }
-//         $query = trim($query , " && ");
-//         $query .= " limit $this->limit offset $this->offset ";
-//         $data = array_merge($data , $data_not);
-//         return $this->query($query , $data);
-
-//     }
-
-//     public function first($data , $data_not = []){
-
-//     }
-//     public function insert($data){
-
-//     }
-
-//     public function update($id , $data){
-
-//     }
-
-//     public function delete($id){
-
-//     }
-// }
 
 ?>

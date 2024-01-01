@@ -102,6 +102,24 @@
             font-size: 20px;
             cursor: pointer;
         }
+
+        #ticke {
+            display: none;
+        }
+
+        .ticket-action a {
+            background-color: #3498db;
+            color: #fff;
+            padding: 2px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .ticket-action a:hover {
+            background-color: #2980b9;
+        }
     </style>
 </head>
 
@@ -120,13 +138,27 @@
         <?php foreach ($data as $ticket): ?>
             <div class="ticket">
                 <div class="ticket-info">
-                    <p>Type: <?php echo $ticket->typeTicket; ?></p>
-                    <p>Prix: <?php echo $ticket->priceTicket; ?> €</p>
-                    <p>Quantité disponible: <?php echo $ticket->coun; ?></p>
+                    <p>Type:
+                        <?php echo $ticket->typeTicket; ?>
+                    </p>
+                    <p>Prix:
+                        <?php echo $ticket->priceTicket; ?> €
+                    </p>
+                    <p>Quantité disponible:
+                        <?php echo $ticket->coun; ?>
+                    </p>
                 </div>
-                <div class="ticket-action">
-                    <button onclick="ouvrirModal(<?php echo $ticket->id; ?>)">Acheter</button>
-                </div>
+                <?php
+                if ($_SESSION['id'] == null) {
+                    echo "<div class='ticket-action'>
+            <a href='home'> login </a>
+          </div>";
+                } else {
+                    echo "<div class='ticket-action'>
+            <button onclick='ouvrirModal(" . $ticket->id . ")'>Acheter</button>
+          </div>";
+                }
+                ?>
             </div>
         <?php endforeach; ?>
     </div>
@@ -136,10 +168,11 @@
         <div class="modal-content">
             <span class="close" onclick="fermerModal()">&times;</span>
             <h2>Sélectionnez la quantité</h2>
-            <form id="formQuantite">
+            <form id="formQuantite" method="POST">
                 <label for="quantite">Quantité :</label>
-                <input type="number" id="quantite" name="quantite" min="1" max="10" required>
-                <button type="button" onclick="acheterBillet()">Acheter</button>
+                <input type="number" id="quantite" name="count" min="1" max="10" required>
+                <input type="number" id="ticke" name="idtick" min="1" max="10" required value="">
+                <input type="submit" value="Acheter" name="acheter" onclick="acheterBillet()">
             </form>
         </div>
     </div>
@@ -151,8 +184,9 @@
     <script>
         function ouvrirModal(idTicket) {
             var modal = document.getElementById("modal");
+            document.getElementById('ticke').value = idTicket;
             modal.style.display = "block";
-            // Ajouter du code pour remplir d'autres informations sur le billet en fonction de son id
+            console.log(idTicket);
         }
 
         function fermerModal() {
@@ -163,7 +197,6 @@
         function acheterBillet() {
             // Ajouter ici le code pour gérer l'achat du billet avec la quantité sélectionnée
             var quantite = document.getElementById("quantite").value;
-            alert('Billet acheté avec succès ! Quantité : ' + quantite);
             fermerModal();
         }
     </script>
