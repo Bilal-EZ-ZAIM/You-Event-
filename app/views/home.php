@@ -79,9 +79,9 @@
     <header>
         <h1>YouÉvénements</h1>
         <nav>
-            <a href="home.html">Accueil</a>
-            <a href="login.html">Connexion</a>
-            <a href="signup.html">Inscription</a>
+            <a href="home.php">Accueil</a>
+            <a href="login.php">Connexion</a>
+            <a href="signup.php">Inscription</a>
         </nav>
     </header>
 
