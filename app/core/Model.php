@@ -3,11 +3,58 @@
 trait Model
 {
     use Database;
-    // protected $table = 'utilisateurs';
     protected $limit = 5;
     protected $offset = 0;
     protected $order_type = "desc";
     protected $order_column = "id";
+
+    public function getTable()
+    {
+        return $this->table;
+    }
+
+    public function getLimit()
+    {
+        return $this->limit;
+    }
+
+    public function getOffset()
+    {
+        return $this->offset;
+    }
+
+    public function getOrderType()
+    {
+        return $this->order_type;
+    }
+
+    public function getOrderColumn()
+    {
+        return $this->order_column;
+    }
+
+    public function dynamicJoin($joinTable, $currentTableColumn, $joinColumn)
+    {
+        $query = "SELECT * FROM $this->table";
+        $query .= " INNER JOIN $joinTable ON $this->table.$currentTableColumn = $joinTable.$joinColumn";
+
+        return $this->query($query);
+    }
+
+    public function dynamicMultiJoin($joins)
+    {
+        $query = "SELECT * FROM $this->table";
+
+        foreach ($joins as $join) {
+            $joinTable = $join['table'];
+            $currentTableColumn = $join['currentTableColumn'];
+            $joinColumn = $join['joinColumn'];
+
+            $query .= " INNER JOIN $joinTable ON $this->table.$currentTableColumn = $joinTable.$joinColumn";
+        }
+
+        return $this->query($query);
+    }
 
     public function findAll()
     {
@@ -22,56 +69,35 @@ trait Model
         for ($i = 0; $i < count($use); $i++) {
             array_push($array, $use[$i]->Field);
         }
-        show($array);
         return $array;
 
     }
     public function where($data)
     {
         $query = "SELECT * FROM $this->table WHERE ";
+        $conditions = [];
 
-        // Assuming $data is an associative array with column names as keys and values as values
-        foreach ($data as $key => $value) {
-            $query .= "$key = :$key AND ";
+        if (!empty($data)) {
+            foreach ($data as $key => $value) {
+                $conditions[] = "$key = :$key";
+            }
+
+            $query .= implode(" AND ", $conditions);
+            return $this->query($query, $data);
+        } else {
+            return [];
         }
-
-        $query = rtrim($query, " AND ");
-
-
-        return $this->query($query, $data);
     }
+
 
     public function login($data)
     {
         $query = "SELECT * FROM $this->table WHERE email = :email ";
-
+        $_SESSION['id'] = 5;
         return $this->query($query, $data);
     }
 
 
-    // public function where($data, $data_not = [])
-    // {
-
-    //     $query = "SELECT * FROM $this->table WHERE ";
-    //     $conditions = [];
-
-    //     foreach ($data as $key => $value) {
-    //         $conditions[] = "$key = :$key";
-    //     }
-
-    //     foreach ($data_not as $key => $value) {
-    //         $conditions[] = "$key != :$key";
-    //     }
-
-    //     $query .= implode(" AND ", $conditions);
-    //     $query .= "ORDER BY $this->order_column  LIMIT $this->limit OFFSET $this->offset ";
-
-    //     $mergedData = array_merge($data, $data_not);
-
-    //     return $this->query($query, $mergedData);
-    // }
-
-    // Implement other CRUD methods (insert, update, delete, first) as needed
     public function first($data, $data_not = [])
     {
         $query = "SELECT * FROM $this->table WHERE ";
@@ -86,11 +112,18 @@ trait Model
         }
 
         $query .= implode(" AND ", $conditions);
-        $query .= " LIMIT $this->limit OFFSET $this->offset ";
+
+        if ($this->limit !== null && $this->offset !== null) {
+            $query .= " LIMIT :limit OFFSET :offset ";
+        }
 
         $mergedData = array_merge($data, $data_not);
 
+        $mergedData['limit'] = $this->limit;
+        $mergedData['offset'] = $this->offset;
+
         $result = $this->query($query, $mergedData);
+
         if ($result) {
             return $result[0];
         } else {
@@ -98,11 +131,19 @@ trait Model
         }
     }
 
-    public function insert($data)
-    {
-        $keys = array_keys($data);
-        $query = "INSERT INTO $this->table (" . implode(", ", $keys) . ") VALUES (:" . implode(", :", $keys) . ") ";
 
+
+    public function insert($data = [])
+    {
+        $colum = $this->getColomn();
+
+        if (count($colum) !== count($data)) {
+            die("Number of columns does not match number of values");
+        }
+
+        $columns = implode(", ", $colum);
+        $placeholders = ":" . implode(", :", $colum);
+        $query = "INSERT INTO $this->table ($columns) VALUES ($placeholders)";
 
         try {
             $this->query($query, $data);
@@ -111,36 +152,8 @@ trait Model
             die("Insert failed: " . $e->getMessage());
         }
     }
-    public function test()
-    {
-        $qz = $this->getColomn();
-        $data = [
-            "id",
-            "bilal",
-            "zaim",
-            "bilalzaim@gmail.com",
-            "123456",
-            "1"
 
-        ];
-        echo "<from  >";
-        foreach($qz as $inp){
-            echo "<input type=text name=$inp placeholder=$inp id=$inp> </input>";
-        }
-        echo "</from >";
-        $query = "INSERT INTO $this->table" ." ( `  " .  implode(' ` , ` ', $qz)." ` )  ". " VALUES " . ' ( "  ' .  implode(' " , " ', $data).' " )  ' ;
-        
-        
-    }
 
-    // public function insert($data)
-    // {
-    //     $keys = array_keys($data);
-    //     $query = "INSERT INTO $this->table (" . implode(" , ", $keys) . ") VALUES(:" . implode(" , :", $keys) . ") ";
-    //     echo $query;
-    //     $this->query($query, $data);
-    //     return false;
-    // }
 
     public function update($id, $data, $id_column = 'id')
     {
@@ -148,82 +161,42 @@ trait Model
         $query = "UPDATE $this->table SET ";
 
         foreach ($keys as $key) {
-            $query .= "$key = :$key, ";
+            $query .= "`$key` = :$key, ";
         }
 
         $query = rtrim($query, ', ');
 
-        $query .= " WHERE $id = :$id_column ";
+        $query .= " WHERE `$id_column` = :$id_column ";
 
         $data[$id_column] = $id;
 
-        echo $query;
-        $this->query($query, $data);
-        return false; 
+        try {
+            $this->query($query, $data);
+            return true; 
+        } catch (PDOException $e) {
+            die("Update failed: " . $e->getMessage());
+        }
     }
+
     public function delete($id_column, $id = 'id')
     {
         $data[$id] = $id_column;
         $query = "DELETE FROM $this->table WHERE $id = :$id ";
-        $this->query($query, $data);
-        return false;
 
+        try {
+            $this->query($query, $data);
+            return true;
+        } catch (PDOException $e) {
+            die("Delete failed: " . $e->getMessage());
+        }
+    }
+    public function de()
+    {
+        echo "hhhhh";
     }
 
 
+
 }
-
-?>
-
-
-
-
-
-<?php
-
-// class Model extends  Database{
-//     protected $table = 'utilisateurs';
-//     protected $limit = 5;
-//     protected $offset = 0;
-//     // function test(){
-//     //     $query = "SELECT * FROM `utilisateurs`";
-//     //     $result = $this->query($query);
-//     //     show($result);
-//     // }
-
-//     public function where($data , $data_not = []){
-//         $query = "";
-//         $query = "SELECT * FROM $this->table WHERE ";
-//         $keys = array_keys($data);
-//         $keys_not = array_keys($data_not);
-
-//         foreach($keys as $key){
-//             $query .= $key . " = : " .$key . " && ";
-//         }
-//         foreach($keys_not as $key){
-//             $query .= $key . " != : " .$key . " && ";
-//         }
-//         $query = trim($query , " && ");
-//         $query .= " limit $this->limit offset $this->offset ";
-//         $data = array_merge($data , $data_not);
-//         return $this->query($query , $data);
-
-//     }
-
-//     public function first($data , $data_not = []){
-
-//     }
-//     public function insert($data){
-
-//     }
-
-//     public function update($id , $data){
-
-//     }
-
-//     public function delete($id){
-
-//     }
-// }
 
 ?>

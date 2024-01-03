@@ -7,16 +7,19 @@ trait Database {
             $con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             return $con;
         } catch (PDOException $e) {
+
            die("Connection failed: " . $e->getMessage());
         }
     }
     
 
-    public function query($query, $data = []){
-        try {
-            $con = $this->connect();
-            $stm = $con->prepare($query);
-            $stm->execute($data);
+    public function query($query, $data = [])
+{
+    try {
+        $con = $this->connect();
+        $stm = $con->prepare($query);
+        $stm->execute($data);
+
 
             $result = $stm->fetchAll(PDO::FETCH_OBJ);
             if(is_array($result) && count($result) > 0){
@@ -26,8 +29,16 @@ trait Database {
             }
         } catch (PDOException $e) {
             die("Query failed: " . $e->getMessage());
+        if (strpos(strtoupper($query), 'INSERT') !== false) {
+            return true;
+
         }
+        $result = $stm->fetchAll(PDO::FETCH_OBJ);
+        return is_array($result) ? $result : [];
+    } catch (PDOException $e) {
+        die("Query failed: " . $e->getMessage());
     }
+}
 
     public function get_row($query, $data = []){
         try {
@@ -47,7 +58,13 @@ trait Database {
     }
 }
 
+
+
+
+
+
 ?>
+
 
 
 

@@ -1,18 +1,25 @@
 <?php
 class Home extends Controller
 {
+
+
+
     public function index()
     {
         $user = new User;
-        $eve = new Eve;
-        $eve->getColomn();
-        $eve->test();
-        $result = $user->findAll();
-         $user->test();
-        $data['result'] = $result;
+        $eventes = new Eve;
+        $table = $user->getTable();
+        $toutEventes = $eventes->findAll();
+        // $join = $eventes->dynamicJoin($table ,'idU','id');
         
-        $this->view('home', $data);
+        
+        if(count($toutEventes) > 0){
+            $this->view('home', $toutEventes);
+        }else{
+            $this->view('home');
+        }
+        
     }
-    
+
 }
 ?>
