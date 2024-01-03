@@ -10,6 +10,7 @@
 </head>
 
 <body>
+    <div class="row justify-content-center">
     <div class="row justify-content-center align-items-center">
         <div class="card mt-3" style="background-color:#333 ;width:40%; color:#fff">
             <div class="card-header">
@@ -25,6 +26,9 @@
                         <label for="exampleFormControlTextarea1" class="form-label">Password</label>
                         <input type="password" class="form-control" name="password" id="exampleFormControlInput1" placeholder="">
                     </div>
+                    <button type="submit" class="btn btn-primary mt-3" name="signUp">Sign in</button>
+                    <div class="mb-3 text-end">
+                        <a href="home" class="">Sign up</a>
                     <button type="submit" class="btn btn-primary mt-3" name="login">Sign in</button>
                     <div class="mb-3 text-end">
                         <a href="singup.php" class="text-decoration-none " style=" color:#fff">Sign up</a>
@@ -33,9 +37,6 @@
             </div>
         </div>
     </div>
-</body>
-
-</html>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
 </body>

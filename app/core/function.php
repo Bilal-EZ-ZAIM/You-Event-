@@ -1,7 +1,4 @@
 <?php
-
-
-
  function show($st){
     echo"<pre>";
     print_r($st); 

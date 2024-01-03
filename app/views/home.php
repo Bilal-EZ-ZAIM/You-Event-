@@ -76,6 +76,9 @@
 </head>
 
 <body>
+    <h1>Je suis Home page </h1>
+    
+  
     <header>
         <h1>YouÉvénements</h1>
         <nav>

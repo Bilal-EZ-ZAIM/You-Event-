@@ -1,14 +1,14 @@
 <?php
-
 trait Database {
-    private function connect(){
+    public function connect(){
         try {
             $string = "mysql:host=".DBHOST.";dbname=".DBNAME;
             $con = new PDO($string, DBUSER, DBPASS);
             $con->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             return $con;
         } catch (PDOException $e) {
-            die("Connection failed: " . $e->getMessage());
+
+           die("Connection failed: " . $e->getMessage());
         }
     }
     
@@ -20,8 +20,18 @@ trait Database {
         $stm = $con->prepare($query);
         $stm->execute($data);
 
+
+            $result = $stm->fetchAll(PDO::FETCH_OBJ);
+            if(is_array($result) && count($result) > 0){
+                return $result;
+            } else {
+                return [];
+            }
+        } catch (PDOException $e) {
+            die("Query failed: " . $e->getMessage());
         if (strpos(strtoupper($query), 'INSERT') !== false) {
             return true;
+
         }
         $result = $stm->fetchAll(PDO::FETCH_OBJ);
         return is_array($result) ? $result : [];
