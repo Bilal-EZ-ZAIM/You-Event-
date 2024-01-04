@@ -1,0 +1,15 @@
+<h1>Je suis Home page </h1>
+
+    <form method="POST">
+        <?php foreach ($input as $row): ?>
+            <input type="text" id=<?php echo $row ?> placeholder=<?php echo $row ?> name=<?php echo $row ?>>
+        <?php endforeach; ?>
+        <input type="submit" name="insert">
+    </from>
+
+    
+        
+        <script>
+            let pass =document.getElementById("passwords");
+            pass.type = "password";
+        </script>
